@@ -7,40 +7,47 @@ This repository implements an automated, event-driven serverless data ingestion 
 
 ```mermaid
 graph TD
-    subgraph Google Cloud Platform
-        subgraph Cloud Storage (GCS)
-            A["Staging Bucket (gs://PROJECT_ID)"]
+    subgraph "Google Cloud Platform"
+
+        subgraph "Cloud Storage"
+            A["Staging Bucket<br/>gs://PROJECT_ID"]
         end
 
-        subgraph Eventarc Event Routing
-            B["GCS Object Finalize Event"]
+        subgraph "Eventarc"
+            B["Object Finalized Event"]
             C["Eventarc Trigger"]
         end
 
-        subgraph Cloud Run Functions
-            D["loadBigQueryFromAvro Function"]
-            E["BigQuery Client SDK"]
-            F["Storage Client SDK"]
+        subgraph "Cloud Run Functions (2nd Gen)"
+            D["loadBigQueryFromAvro"]
+            E["Storage Client"]
+            F["BigQuery Client"]
         end
 
-        subgraph BigQuery Data Warehouse
-            G["loadavro Dataset"]
-            H["campaigns Table"]
+        subgraph "BigQuery"
+            G["Dataset: loadavro"]
+            H["Table: campaigns"]
+            I["Load Job"]
         end
     end
 
-    A -->|Upload campaigns.avro| B
+    A -->|"Upload campaigns.avro"| B
     B --> C
-    C -->|Trigger Function| D
-    D -->|Reads Object Metadata| F
-    D -->|Executes Load Job| E
-    E -->|Loads AVRO Data| H
-    H -->|Belongs to| G
+    C -->|"Invoke Function"| D
 
-    classDef gcp fill:#4285F4,stroke:#333,stroke-width:1px,color:#fff;
-    class A,D,G,H gcp;
+    D --> E
+    D --> F
+
+    E -->|"Read Avro Object"| A
+    F -->|"Submit Load Job"| I
+
+    I -->|"Create / Replace Table"| H
+    G --> H
+
+    classDef gcp fill:#4285F4,color:#fff,stroke:#1A73E8,stroke-width:2px;
+
+    class A,D,G,H,I gcp;
 ```
-
 The pipeline flows as follows:
 1. An Avro file (e.g., `campaigns.avro`) is uploaded to the staging Cloud Storage bucket.
 2. The file upload triggers a `google.storage.object.finalize` event.
