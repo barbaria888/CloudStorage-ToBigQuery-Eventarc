@@ -1,7 +1,7 @@
 # Serverless Data Ingestion: Loading BigQuery from Cloud Storage via Cloud Run Functions
 
 ## Executive Summary
-This repository implements an automated, event-driven serverless data ingestion pipeline that loads Avro files from Cloud Storage into BigQuery. Utilizing Cloud Run Functions (2nd Gen) triggered by Eventarc, the system automatically detects, parses, and loads incoming Avro datasets into BigQuery tables with zero operational overhead and full scale-to-zero efficiency.
+This repository implements an automated, event-driven serverless data ingestion pipeline that loads Avro files from Cloud Storage into BigQuery. Utilizing Cloud Run Functions  triggered by Eventarc, the system automatically detects, parses, and loads incoming Avro datasets into BigQuery tables with zero operational overhead and full scale-to-zero efficiency.
 
 ## Architecture Overview
 
